@@ -1,0 +1,29 @@
+.cst-section-2{
+    background-color: #fff;
+    position: relative;
+    z-index: 10;
+    padding: 80px 50px;
+    .cst-box{
+        .cst-row{
+            display: flex;
+            grid-gap: 20px;
+            .cst-title-container{
+                margin-bottom: 15px;
+                h3{
+                    color: #777777;
+                }
+            }
+            .cst-col{
+                width: 100%;
+                display: flex;
+                .cst-img-cont{
+                    width: 100%;
+                    img{
+                        width: 100%;
+                        height: auto;
+                    }
+                }
+            }
+        }
+    }
+}

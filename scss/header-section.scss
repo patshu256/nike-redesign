@@ -1,0 +1,21 @@
+.cst-header-section{
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    z-index: 11;
+    background-color: #F3F3F3;
+    .cst-header-logo {
+        text-align: center;
+        display: block;
+        padding-top: 7px;
+        a.cst-header-image{
+            display: inline-block;
+            svg {
+                width: 50px;
+                height: auto;
+                display: inline-block;
+            }
+        }
+    }   
+}
