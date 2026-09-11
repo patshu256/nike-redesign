@@ -81,7 +81,7 @@ window.addEventListener("scroll", function () {
 
         let cstScrollPercentage = (scrollPosition/atfSectionHeight) * 100;
         // if (scrollPosition > item.start) {
-        if (cstScrollPercentage > 87) {
+        if (cstScrollPercentage > 82) {
 
             item.targetY = 
                 (scrollPosition - item.start) * item.speed;
