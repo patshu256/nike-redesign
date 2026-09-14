@@ -1,8 +1,178 @@
-let atfSectionHeight = 0;
-
 document.addEventListener("DOMContentLoaded", function () {
 
-    const cstClassLists = "cst-atf-section";
+    cstATFFakeSection("cst-atf-section");
+    cstFakeSectionCreation("cst-section-2");
+    cstFakeSectionCreation("cst-section-3");
+    setActiveATFFake("cst-atf-section-fake");
+
+    var cstSizeLists = document.querySelectorAll('.cst-size');
+    cstSizeLists.forEach(item => {
+        item.setAttribute('onclick', "setItemSize(this)");
+    });
+
+    // Set active-gsap
+    const waitingSections = document.querySelectorAll(".scroll-waiting");
+
+    /*
+    * Detection advance in pixels.
+    *
+    * 0   = normal center detection
+    * 50  = activate next section 50px earlier
+    * 100 = activate next section 100px earlier
+    */
+    const detectionAdvance = 250;
+
+
+    function updateScrollSections() {
+
+        /*
+        * Normal detection point is the middle
+        * of the viewport.
+        *
+        * Adding detectionAdvance moves the
+        * detection point lower, causing the
+        * next section to activate earlier
+        * while scrolling down.
+        */
+        const detectionPoint =
+            (window.innerHeight / 2) + detectionAdvance;
+
+
+        let activeIndex = -1;
+
+
+        /*
+        * Find which section currently contains
+        * the detection point.
+        */
+        waitingSections.forEach(function(section, index) {
+
+            const rect = section.getBoundingClientRect();
+
+            const isActive =
+                rect.top <= detectionPoint &&
+                rect.bottom >= detectionPoint;
+
+
+            if (isActive) {
+
+                activeIndex = index;
+
+            }
+
+        });
+
+
+
+        /*
+        * Apply section states
+        */
+        waitingSections.forEach(function(section, index) {
+
+            section.classList.remove(
+                "cst-active-gsap",
+                "cst-passed-gsap"
+            );
+
+
+            /*
+            * Current section
+            */
+            if (index === activeIndex) {
+
+                section.classList.add(
+                    "cst-active-gsap"
+                );
+
+            }
+
+
+            /*
+            * Sections before current section
+            */
+            else if (
+                activeIndex !== -1 &&
+                index < activeIndex
+            ) {
+
+                section.classList.add(
+                    "cst-passed-gsap"
+                );
+
+            }
+
+        });
+
+    }
+
+
+
+    /*
+    * Run while scrolling
+    */
+    window.addEventListener(
+        "scroll",
+        updateScrollSections,
+        {
+            passive: true
+        }
+    );
+
+
+
+    /*
+    * Recalculate if viewport changes
+    */
+    window.addEventListener(
+        "resize",
+        updateScrollSections
+    );
+
+
+
+    /*
+    * Initial check
+    */
+    updateScrollSections();
+    //Set active-gsap code end here
+
+    // Detect when user starts scrolling from the top
+
+    function detectScrollStart() {
+
+        if (window.scrollY > 0) {
+
+            document.body.classList.add(
+                "cst-scroll-started"
+            );
+
+        } else {
+
+            document.body.classList.remove(
+                "cst-scroll-started"
+            );
+
+        }
+
+    }
+
+    window.addEventListener(
+        "scroll",
+        detectScrollStart,
+        {
+            passive: true
+        }
+    );
+
+    // Initial check
+    detectScrollStart();
+});
+
+let atfSectionHeight = 0;
+let fakeSectionCreation = 0;
+
+function cstATFFakeSection(x){
+    const cstClassLists = x;
     const atfSection = document.querySelector("."+cstClassLists);
     
 
@@ -13,6 +183,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         var cstatfSectionFake = document.createElement("div");
         cstatfSectionFake.classList.add(cstClassLists + "-fake");
+        cstatfSectionFake.classList.add("scroll-waiting");
         cstatfSectionFake.style.height = height + "px";
 
         atfSection.parentNode.insertBefore(
@@ -22,16 +193,34 @@ document.addEventListener("DOMContentLoaded", function () {
 
         atfSection.classList.add("fixed-gsap");
 
-        console.log("ATF Section Height:", height + "px");
+    }
+}
+
+function cstFakeSectionCreation(x){
+    const cstClassLists = x;
+    const atfSection = document.querySelector("."+cstClassLists);
+    
+
+    if (atfSection) {
+
+        const height = atfSection.offsetHeight;
+        fakeSectionCreation = height;
+
+        var cstatfSectionFake = document.createElement("div");
+        cstatfSectionFake.classList.add(cstClassLists + "-fake");
+        cstatfSectionFake.classList.add("scroll-waiting");
+        cstatfSectionFake.style.height = height + "px";
+
+        atfSection.parentNode.insertBefore(
+            cstatfSectionFake,
+            atfSection
+        );
+        
+        atfSection.classList.add("fixed-gsap");
+        atfSection.classList.add("cst-below-atf");
 
     }
-
-    var cstSizeLists = document.querySelectorAll('.cst-size');
-    cstSizeLists.forEach(item => {
-        item.setAttribute('onclick', "setItemSize(this)");
-    });
-
-});
+}
 
 const cstGsapScroll1 = document.querySelector(".cst-gsap-scroll-1");
 
@@ -153,3 +342,11 @@ function setItemSize(x){
 
     cst_element.classList.add("cst-active");
 }
+
+
+function setActiveATFFake(x){
+    var cstSetFake = document.querySelector("."+x);    
+    // cstSetFake.classList.add("cst-active-gsap");
+}
+
+

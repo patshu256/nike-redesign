@@ -40,7 +40,8 @@
             }
         }
         .cst-col-1, .cst-col-3{
-            padding-top: 50px;
+            max-height: 85vh;
+            align-items: center;
         }
         .cst-col-1{
             .cst-title-container{

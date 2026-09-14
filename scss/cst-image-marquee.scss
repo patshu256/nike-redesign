@@ -1,0 +1,88 @@
+.cst-section-2{
+    .cst-box-2{
+        .cst-image-marquee {
+            width: 100%;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .cst-image-marquee,
+.cst-image-marquee * {
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+}
+
+.cst-image-marquee {
+    cursor: grab;
+    touch-action: pan-y;
+}
+
+.cst-image-marquee.is-dragging {
+    cursor: grabbing;
+}
+
+.cst-image-marquee img,
+.cst-image-marquee a {
+    -webkit-user-drag: none;
+}
+
+.cst-image-marquee a {
+    pointer-events: auto;
+}
+
+
+        /*
+        * Moving track
+        */
+        .cst-image-marquee-track {
+            display: flex;
+
+            width: max-content;
+
+            will-change: transform;
+        }
+
+
+        /*
+        * One complete image group
+        */
+        .cst-image-marquee-group {
+            display: flex;
+
+            flex-shrink: 0;
+
+            gap: 30px;
+
+            /*
+            * IMPORTANT:
+            *
+            * This creates the same 30px spacing
+            * between the end of one group and
+            * the beginning of the duplicate.
+            */
+            padding-right: 30px;
+        }
+
+
+        .cst-marquee-item.cst-marquee-item.cst-marquee-item img {
+            width: 100%;
+            height: 100%;
+
+            display: block;
+
+            object-fit: cover;
+        }
+
+
+        .cst-marquee-item.cst-marquee-item.cst-marquee-item {
+            flex: 0 0 auto;
+
+            width: 320px;
+            height: 35vh;
+
+            overflow: hidden;
+        }
+    }
+}

@@ -1,0 +1,323 @@
+<style>
+.cst-image-marquee {
+    width: 100%;
+    overflow: hidden;
+    position: relative;
+}
+
+
+/*
+ * Moving track
+ */
+.cst-image-marquee-track {
+    display: flex;
+
+    width: max-content;
+
+    will-change: transform;
+}
+
+
+/*
+ * One complete image group
+ */
+.cst-image-marquee-group {
+    display: flex;
+
+    flex-shrink: 0;
+
+    gap: 30px;
+
+    /*
+     * IMPORTANT:
+     *
+     * This creates the same 30px spacing
+     * between the end of one group and
+     * the beginning of the duplicate.
+     */
+    padding-right: 30px;
+}
+
+
+.cst-marquee-item {
+    flex: 0 0 auto;
+
+    width: 320px;
+    height: 320px;
+
+    overflow: hidden;
+}
+
+
+.cst-marquee-item img {
+    width: 100%;
+    height: 100%;
+
+    display: block;
+
+    object-fit: cover;
+}
+</style>
+
+<div class="cst-image-marquee">
+
+    <div class="cst-image-marquee-track">
+
+        <div class="cst-image-marquee-group">
+
+            <div class="cst-marquee-item">
+                <img src="img/pg-img-1.jpg" alt="Gallery image 1">
+            </div>
+
+            <div class="cst-marquee-item">
+                <img src="img/pg-img-2.jpg" alt="Gallery image 2">
+            </div>
+
+            <div class="cst-marquee-item">
+                <img src="img/pg-img-3.jpg" alt="Gallery image 3">
+            </div>
+
+            <div class="cst-marquee-item">
+                <img src="img/ts-1.avif" alt="Gallery image 4">
+            </div>
+
+            <div class="cst-marquee-item">
+                <img src="img/ts-2.avif" alt="Gallery image 5">
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+
+    const marquees = document.querySelectorAll(
+        ".cst-image-marquee"
+    );
+
+
+    marquees.forEach(function(marquee) {
+
+        const track = marquee.querySelector(
+            ".cst-image-marquee-track"
+        );
+
+        const originalGroup = marquee.querySelector(
+            ".cst-image-marquee-group"
+        );
+
+
+        if (!track || !originalGroup) {
+            return;
+        }
+
+
+        /*
+         * =========================================
+         * SETTINGS
+         * =========================================
+         *
+         * Pixels per second.
+         *
+         * Higher = faster.
+         */
+        const speed = 80;
+
+
+
+        /*
+         * =========================================
+         * CREATE DUPLICATE GROUP
+         * =========================================
+         */
+
+        const clonedGroup =
+            originalGroup.cloneNode(true);
+
+
+        /*
+         * The duplicated content is decorative
+         * for accessibility purposes.
+         */
+        clonedGroup.setAttribute(
+            "aria-hidden",
+            "true"
+        );
+
+
+        track.appendChild(
+            clonedGroup
+        );
+
+
+
+        /*
+         * =========================================
+         * ANIMATION VARIABLES
+         * =========================================
+         */
+
+        let position = 0;
+
+        let lastTime =
+            performance.now();
+
+        let groupWidth = 0;
+
+
+
+        /*
+         * =========================================
+         * CALCULATE EXACT GROUP WIDTH
+         * =========================================
+         */
+
+        function calculateGroupWidth() {
+
+            groupWidth =
+                originalGroup.getBoundingClientRect().width;
+
+        }
+
+
+
+        /*
+         * Wait for images before measuring.
+         */
+        const images =
+            originalGroup.querySelectorAll("img");
+
+
+        let loadedImages = 0;
+
+
+        function imageReady() {
+
+            loadedImages++;
+
+
+            if (loadedImages >= images.length) {
+
+                calculateGroupWidth();
+
+            }
+
+        }
+
+
+        if (images.length) {
+
+            images.forEach(function(image) {
+
+                if (image.complete) {
+
+                    imageReady();
+
+                } else {
+
+                    image.addEventListener(
+                        "load",
+                        imageReady,
+                        {
+                            once: true
+                        }
+                    );
+
+
+                    image.addEventListener(
+                        "error",
+                        imageReady,
+                        {
+                            once: true
+                        }
+                    );
+
+                }
+
+            });
+
+        } else {
+
+            calculateGroupWidth();
+
+        }
+
+
+
+        /*
+         * Recalculate on browser resize.
+         */
+        window.addEventListener(
+            "resize",
+            calculateGroupWidth
+        );
+
+
+
+        /*
+         * =========================================
+         * ANIMATION
+         * =========================================
+         */
+
+        function animate(currentTime) {
+
+            const deltaTime =
+                (currentTime - lastTime) / 1000;
+
+
+            lastTime =
+                currentTime;
+
+
+            /*
+             * Don't animate until dimensions
+             * have been calculated.
+             */
+            if (groupWidth > 0) {
+
+                position -=
+                    speed * deltaTime;
+
+
+
+                /*
+                 * When the entire original group
+                 * moves offscreen, jump exactly
+                 * one group width.
+                 *
+                 * Since the clone is identical,
+                 * this reset is invisible.
+                 */
+                if (position <= -groupWidth) {
+
+                    position += groupWidth;
+
+                }
+
+
+
+                track.style.transform =
+                    `translate3d(${position}px, 0, 0)`;
+
+            }
+
+
+            requestAnimationFrame(
+                animate
+            );
+
+        }
+
+
+        requestAnimationFrame(
+            animate
+        );
+
+    });
+
+});
+</script>
